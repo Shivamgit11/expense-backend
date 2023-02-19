@@ -14,7 +14,7 @@ const app = express();
 const adminRoutes = require("./routes/admin");
 const shopRoutes = require("./routes/shop");
 const User = require("./models/user");
-var cors = require('cors');
+var cors = require("cors");
 app.use(cors());
 
 app.use(bodyParser.json());
@@ -40,6 +40,18 @@ app.post("/user/adduser", async (req, res, next) => {
     });
     res.status(201).json({ newUserDetail: data });
   } catch (err) {
+    res.status(500).json({
+      error: err,
+    });
+  }
+});
+
+app.get("/user/getusers", async (req, res, next) => {
+  try {
+    const users = await User.findAll();
+    res.status(200).json({ allUsers: users });
+  } catch (err) {
+    console.log("Get User is failin ", JSON.stringify(err));
     res.status(500).json({
       error: err,
     });
