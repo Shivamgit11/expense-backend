@@ -13,7 +13,8 @@ const app = express();
 
 const adminRoutes = require("./routes/admin");
 const shopRoutes = require("./routes/shop");
-const User = require("./models/user");
+const userRoutes = require("./routes/user");
+const User = require("./models/User");
 var cors = require("cors");
 app.use(cors());
 
@@ -23,45 +24,12 @@ app.use(express.static(path.join(__dirname, "public")));
 app.use("/admin", adminRoutes);
 app.use(shopRoutes);
 
-app.post("/user/adduser", async (req, res, next) => {
-  try {
-    console.log("1234");
-    if (!req.body.phonenumber) {
-      throw new Error("Phone number is mandatory");
-    }
-    const name = req.body.name;
-    const email = req.body.email;
-    const phonenumber = req.body.number;
-
-    const data = await User.create({
-      name: name,
-      email: email,
-      phonenumber: phonenumber,
-    });
-    res.status(201).json({ newUserDetail: data });
-  } catch (err) {
-    res.status(500).json({
-      error: err,
-    });
-  }
-});
-
-app.get("/user/getusers", async (req, res, next) => {
-  try {
-    const users = await User.findAll();
-    res.status(200).json({ allUsers: users });
-  } catch (err) {
-    console.log("Get User is failin ", JSON.stringify(err));
-    res.status(500).json({
-      error: err,
-    });
-  }
-});
+app.use("/user", userRoutes);
 
 app.use(errorController.get404);
 
 sequelize
-  .sync()
+  .sync({ alter: true })
   .then((result) => {
     // console.log(result);
     app.listen(3000);
