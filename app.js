@@ -14,8 +14,11 @@ const app = express();
 const adminRoutes = require("./routes/admin");
 const shopRoutes = require("./routes/shop");
 const userRoutes = require("./routes/user");
+const expeneRoutes = require("./routes/expense");
 const User = require("./models/User");
 var cors = require("cors");
+const Expense = require("./models/Expense");
+
 app.use(cors());
 
 app.use(bodyParser.json());
@@ -25,6 +28,13 @@ app.use("/admin", adminRoutes);
 app.use(shopRoutes);
 
 app.use("/user", userRoutes);
+app.use("/expense", expeneRoutes);
+
+//working for expense backend
+
+
+
+///everty thing for expense will be done inside it
 
 app.use(errorController.get404);
 
