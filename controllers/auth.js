@@ -1,13 +1,14 @@
 const Auth = require("../models/Auth");
 
 const addAuth = async (req, res, next) => {
+  console.log(req);
     try {
       const name = req.body.name;
-      const phone = req.body.phone;
+      const email = req.body.email;
       const password = req.body.password;
       const data = await Auth.create({
         name: name,
-        phone: phone,
+        email: email,
         password: password,
       });
       res.status(201).json({ newAuthdetails: data });

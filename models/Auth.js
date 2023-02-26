@@ -14,7 +14,7 @@ const Auth = sequelize.define("auth", {
     type: Sequelize.STRING,
     unique: true,
   },
-  phone: {
+  password: {
     type: Sequelize.STRING,
     unique: true,
   },
