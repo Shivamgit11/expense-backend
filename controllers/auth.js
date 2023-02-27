@@ -1,5 +1,7 @@
 const Auth = require("../models/Auth");
 
+const bcrypt = require("bcrypt");
+
 function isstringinvalid(string) {
   if (string === undefined || string.length === 0) {
     return true;
@@ -24,12 +26,13 @@ const addAuth = async (req, res, next) => {
         .json({ err: "Bad parameters, something is missing" });
     }
 
-    await Auth.create({
-      name: name,
-      email: email,
-      password: password,
+    const saltRound = 10;
+
+    bcrypt.hash(password, saltRound, async (err, hash) => {
+      console.log(err);
+      await Auth.create({ name, email, password: hash });
+      res.status(201).json({ message: "Successfully created new user" });
     });
-    res.status(201).json({ message: "Successfully created new user" });
   } catch (err) {
     res.status(500).json({
       error: err,
