@@ -33,7 +33,7 @@ app.use("/auth", authRoutes);
 ///everty thing for expense will be done inside it
 
 sequelize
-  .sync({ alter: true })
+  .sync({ alter: true, force: true })
   .then((result) => {
     // console.log(result);
     app.listen(3000);
