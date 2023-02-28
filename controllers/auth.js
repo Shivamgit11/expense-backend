@@ -2,6 +2,8 @@ const Auth = require("../models/Auth");
 
 const bcrypt = require("bcrypt");
 
+const jwt = require("jsonwebtoken");
+
 function isstringinvalid(string) {
   if (string === undefined || string.length === 0) {
     return true;
@@ -40,9 +42,13 @@ const addAuth = async (req, res, next) => {
   }
 };
 
+function generateAccessToken(id) {
+  return jwt.sign(id, "kjhkkh");
+}
+
 const loginAuth = async (req, res) => {
   try {
-    console.log(req);
+    // console.log(req);
     const email = req.body.email;
     const password = req.body.password;
 
@@ -55,17 +61,27 @@ const loginAuth = async (req, res) => {
     }
 
     const user = await Auth.findAll({ where: { email } });
+    console.log(user);
 
     if (user.length > 0) {
-      if (user[0].password === password) {
-        res
-          .status(200)
-          .json({ success: true, message: "User LOgged in successfully" });
-      } else {
-        return res
-          .status(400)
-          .json({ success: false, message: "Password is incorrect" });
-      }
+      bcrypt.compare(password, user[0].password, (err, result) => {
+        if (err) {
+          throw new Error("Something went wrong");
+        }
+        if (result === true) {
+          const jwtotken = generateAccessToken(user[0].id);
+          console.log("checking token",jwtotken);
+          return res.status(200).json({
+            success: true,
+            message: "User LOgged in successfully",
+            token: jwtotken,
+          });
+        } else {
+          return res
+            .status(400)
+            .json({ success: false, message: "Password is incorrect" });
+        }
+      });
     } else {
       return res
         .status(404)

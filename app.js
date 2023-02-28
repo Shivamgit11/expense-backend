@@ -15,6 +15,12 @@ const authRoutes = require("./routes/auth");
 const User = require("./models/User");
 var cors = require("cors");
 const Expense = require("./models/Expense");
+const Auth = require("./models/Auth");
+
+const dotenv = require("dotenv");
+
+// get config vars
+dotenv.config();
 
 app.use(cors());
 
@@ -31,9 +37,11 @@ app.use("/auth", authRoutes);
 //working for expense backend
 
 ///everty thing for expense will be done inside it
+Auth.hasMany(Expense);
+Expense.belongsTo(Auth);
 
 sequelize
-  .sync({ alter: true, force: true })
+  .sync()
   .then((result) => {
     // console.log(result);
     app.listen(3000);
