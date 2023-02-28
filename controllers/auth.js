@@ -42,8 +42,8 @@ const addAuth = async (req, res, next) => {
   }
 };
 
-function generateAccessToken(id) {
-  return jwt.sign(id, "kjhkkh");
+function generateAccessToken(id, name) {
+  return jwt.sign({userId: id, name: name}, "kjhkkh");
 }
 
 const loginAuth = async (req, res) => {
@@ -61,7 +61,7 @@ const loginAuth = async (req, res) => {
     }
 
     const user = await Auth.findAll({ where: { email } });
-    console.log(user);
+    // console.log(user);
 
     if (user.length > 0) {
       bcrypt.compare(password, user[0].password, (err, result) => {
@@ -69,7 +69,7 @@ const loginAuth = async (req, res) => {
           throw new Error("Something went wrong");
         }
         if (result === true) {
-          const jwtotken = generateAccessToken(user[0].id);
+          const jwtotken = generateAccessToken(user[0].id, user[0].name);
           console.log("checking token",jwtotken);
           return res.status(200).json({
             success: true,
