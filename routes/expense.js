@@ -17,6 +17,10 @@ router.get(
   useExpenseControler.getExpense
 );
 
-router.delete("/expensedetails/:id", useExpenseControler.deleteExpense);
+router.delete(
+  "/expensedetails/:id",
+  userauthentication.authenticate,
+  useExpenseControler.deleteExpense
+);
 
 module.exports = router;

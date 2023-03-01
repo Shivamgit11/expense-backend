@@ -9,15 +9,16 @@ const app = express();
 // app.set("view engine", "ejs");
 // app.set("views", "views");
 
-const userRoutes = require("./routes/user");
 const expeneRoutes = require("./routes/expense");
 const authRoutes = require("./routes/auth");
-const User = require("./models/User");
+const purchaseroutes = require("./routes/purchase");
+
 var cors = require("cors");
 const Expense = require("./models/Expense");
 const Auth = require("./models/Auth");
 
 const dotenv = require("dotenv");
+const Order = require("./models/order");
 
 // get config vars
 dotenv.config();
@@ -27,12 +28,12 @@ app.use(cors());
 app.use(bodyParser.json());
 app.use(express.static(path.join(__dirname, "public")));
 
-app.use("/user", userRoutes);
-
 //expense
 app.use("/expense", expeneRoutes);
 
 app.use("/auth", authRoutes);
+
+app.use("/purchase", purchaseroutes);
 
 //working for expense backend
 
@@ -40,8 +41,11 @@ app.use("/auth", authRoutes);
 Auth.hasMany(Expense);
 Expense.belongsTo(Auth);
 
+Auth.hasMany(Order);
+Order.belongsTo(Auth);
+
 sequelize
-  .sync()
+  .sync({ alter: true })
   .then((result) => {
     // console.log(result);
     app.listen(3000);

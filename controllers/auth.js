@@ -43,7 +43,7 @@ const addAuth = async (req, res, next) => {
 };
 
 function generateAccessToken(id, name) {
-  return jwt.sign({userId: id, name: name}, "kjhkkh");
+  return jwt.sign({userId: id, name: name}, "secret");
 }
 
 const loginAuth = async (req, res) => {
