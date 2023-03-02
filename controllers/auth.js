@@ -42,8 +42,8 @@ const addAuth = async (req, res, next) => {
   }
 };
 
-function generateAccessToken(id, name) {
-  return jwt.sign({userId: id, name: name}, "secret");
+function generateAccessToken(id, name, isPremiumUser) {
+  return jwt.sign({ userId: id, name: name, isPremiumUser }, "secret");
 }
 
 const loginAuth = async (req, res) => {
@@ -69,8 +69,12 @@ const loginAuth = async (req, res) => {
           throw new Error("Something went wrong");
         }
         if (result === true) {
-          const jwtotken = generateAccessToken(user[0].id, user[0].name);
-          console.log("checking token",jwtotken);
+          const jwtotken = generateAccessToken(
+            user[0].id,
+            user[0].name,
+            user[0].isPremiumUser
+          );
+          console.log("checking token", jwtotken);
           return res.status(200).json({
             success: true,
             message: "User LOgged in successfully",

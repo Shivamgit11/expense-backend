@@ -1,4 +1,4 @@
-const Razorpay = require('razorpay');
+const Razorpay = require("razorpay");
 const Order = require("../models/order");
 
 const purchasepremium = async (req, res) => {
@@ -28,27 +28,29 @@ const purchasepremium = async (req, res) => {
   }
 };
 
-const updateTransactionStatus = (req, res) => {
-  const { payment_id, order_id } = req.body;
-  Order.findOne({ where: { orderid: order_id } }).then((order) => {
-    order
-      .update({ paymentid: payment_id, status: "Successfull" })
+const updateTransactionStatus = async (req, res) => {
+  try {
+    const { payment_id, order_id } = req.body;
+    const order = await Order.findOne({ where: { orderid: order_id } });
+
+    const promise1 = order.update({
+      paymentid: payment_id,
+      status: "successfull",
+    });
+    const promise2 = req.user.update({ isPremiumUser: true });
+    Promise.all([promise1, promise2])
       .then(() => {
-        req.user
-          .update({ isPremiumUser: true })
-          .then(() => {
-            return res
-              .status(202)
-              .json({ success: true, message: "Transaction Successfull" });
-          })
-          .catch((err) => {
-            throw new Error(err);
-          });
+        return res
+          .status(202)
+          .json({ success: true, message: "Transaction Successfull" });
       })
-      .catch((err) => {
-        throw new Error(err);
+      .catch((error) => {
+        throw new Error(error);
       });
-  });
+  } catch (err) {
+    console.log(err);
+    res.status(403).json({ error: err, message: "Something went wrong" });
+  }
 };
 
 module.exports = {

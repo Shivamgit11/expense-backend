@@ -12,4 +12,10 @@ router.get(
   purchaseController.purchasepremium
 );
 
+router.post(
+  "/updatetransactionstatus",
+  authenticatemiddleware.authenticate,
+  purchaseController.updateTransactionStatus
+);
+
 module.exports = router;
