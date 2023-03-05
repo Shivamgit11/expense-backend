@@ -12,6 +12,7 @@ const app = express();
 const expeneRoutes = require("./routes/expense");
 const authRoutes = require("./routes/auth");
 const purchaseroutes = require("./routes/purchase");
+const leaderrouter = require("./routes/premiumFeature");
 
 var cors = require("cors");
 const Expense = require("./models/Expense");
@@ -34,6 +35,8 @@ app.use("/expense", expeneRoutes);
 app.use("/auth", authRoutes);
 
 app.use("/purchase", purchaseroutes);
+
+app.use("/premium", leaderrouter);
 
 //working for expense backend
 
