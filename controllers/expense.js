@@ -1,43 +1,48 @@
+const Auth = require("../models/Auth");
 const Expense = require("../models/Expense");
+const sequelize = require("../util/database");
 
 const addExpense = async (req, res, next) => {
-  const amount = req.body.amount;
-  const description = req.body.desc;
-  const category = req.body.category;
-
-  if (amount == undefined || amount.length === 0) {
-    return res
-      .status(400)
-      .json({ success: false, message: "Parameter mission" });
-  }
-
-  Expense.create({
-    amount: amount,
-    description: description,
-    categoru: category,
-    authId: req.user.id,
+  const t = await sequelize.transaction();
+  try{
+    const amount = req.body.amount;
+    const description = req.body.desc;
+    const category = req.body.category;
+  
+    if (amount == undefined || amount.length === 0) {
+      return res
+        .status(400)
+        .json({ success: false, message: "Parameter mission" });
+    }
+  
+    const expense = await Expense.create(
+      {
+        amount: amount,
+        description: description,
+        categoru: category,
+        authId: req.user.id,
+      },
+      { transaction: t }
+    )
+       
+        const totalExpense = Number(req.user.totalExpenses) + Number(amount);
+        console.log(totalExpense);
+        await Auth.update(
+          {
+            totalExpenses: totalExpense,
+          },
+          {
+            where: { id: req.user.id },
+            transaction: t,
+          }
+        )
+          
+        await t.commit();
+      res.status(200).json({ expense: expense });
+  }catch((err){
+    await  t.rollback();
+    return res.status(500).json({success: false, error: err})
   })
-    .then((expense) => {
-      const totalExpense = Number(req.user.totalExpenses) + Number(amount);
-      console.log(totalExpense);
-      User.update(
-        {
-          totalExpenses: totalExpense,
-        },
-        {
-          where: { id: req.user.id },
-        }
-      )
-        .then(async () => {
-          res.status(200).json({ expense: expense });
-        })
-        .catch(async (err) => {
-          return res.status(500).json({ success: false, error: err });
-        });
-    })
-    .catch(async(err) => {
-      return res.status(500).json({ success: false, error: err });
-    });
 };
 
 const getExpense = async (req, res) => {

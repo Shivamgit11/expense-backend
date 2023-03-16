@@ -48,7 +48,7 @@ Auth.hasMany(Order);
 Order.belongsTo(Auth);
 
 sequelize
-  .sync({ alter: true })
+  .sync({ alter: true})
   .then((result) => {
     // console.log(result);
     app.listen(3000);
