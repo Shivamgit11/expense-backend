@@ -1,4 +1,5 @@
 const Razorpay = require("razorpay");
+const Auth = require("../models/Auth");
 const Order = require("../models/order");
 
 const usercontroller = require("./auth");
