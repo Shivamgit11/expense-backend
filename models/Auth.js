@@ -19,6 +19,10 @@ const Auth = sequelize.define("auth", {
     unique: true,
   },
   isPremiumUser: Sequelize.BOOLEAN,
+  totalExpenses: {
+    type: Sequelize.INTEGER,
+    defaultValue: 0,
+  }
 });
 
 module.exports = Auth;
