@@ -4,17 +4,17 @@ const sequelize = require("../util/database");
 
 const addExpense = async (req, res, next) => {
   const t = await sequelize.transaction();
-  try{
+  try {
     const amount = req.body.amount;
     const description = req.body.desc;
     const category = req.body.category;
-  
+
     if (amount == undefined || amount.length === 0) {
       return res
         .status(400)
         .json({ success: false, message: "Parameter mission" });
     }
-  
+
     const expense = await Expense.create(
       {
         amount: amount,
@@ -23,26 +23,26 @@ const addExpense = async (req, res, next) => {
         authId: req.user.id,
       },
       { transaction: t }
-    )
-       
-        const totalExpense = Number(req.user.totalExpenses) + Number(amount);
-        console.log(totalExpense);
-        await Auth.update(
-          {
-            totalExpenses: totalExpense,
-          },
-          {
-            where: { id: req.user.id },
-            transaction: t,
-          }
-        )
-          
-        await t.commit();
-      res.status(200).json({ expense: expense });
-  }catch((err){
-    await  t.rollback();
-    return res.status(500).json({success: false, error: err})
-  })
+    );
+
+    const totalExpense = Number(req.user.totalExpenses) + Number(amount);
+    console.log(totalExpense);
+    await Auth.update(
+      {
+        totalExpenses: totalExpense,
+      },
+      {
+        where: { id: req.user.id },
+        transaction: t,
+      }
+    );
+
+    await t.commit();
+    res.status(200).json({ expense: expense });
+  } catch (err) {
+    await t.rollback();
+    return res.status(500).json({ success: false, error: err });
+  }
 };
 
 const getExpense = async (req, res) => {
