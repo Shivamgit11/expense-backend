@@ -1,11 +1,12 @@
 const Sib = require("sib-api-v3-sdk");
 
-require("dotenv").config();
+const dotenv = require("dotenv");
+dotenv.config();
 
 const client = Sib.ApiClient.instance;
 
 const apiKey = client.authentications["api_key"];
-apiKey.apiKey = process.env.API_KEY;
+apiKey.apiKey = process.env.SENGRID_API_KEY;
 
 const transEmailApi = new Sib.TransactionalEmailsApi();
 

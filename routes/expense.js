@@ -17,6 +17,12 @@ router.get(
   useExpenseControler.getExpense
 );
 
+router.get(
+  "/download",
+  userauthentication.authenticate,
+  useExpenseControler.download
+);
+
 router.delete(
   "/expensedetails/:id",
   userauthentication.authenticate,
