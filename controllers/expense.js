@@ -5,8 +5,11 @@ const Userservice = require("../services/userservices");
 const S3services = require("../services/S3services");
 
 const download = async (req, res) => {
+  if (!req.user.ispremiumuser) {
+    return res.status(400).json({ message: "only for premium user" });
+  }
   try {
-    const expenses = await Userservice.getExpense(req);
+    const expenses = await req.user.getExpense();
     console.log(expenses);
 
     const stringifiedExpense = JSON.stringify(expenses);
@@ -65,14 +68,18 @@ const addExpense = async (req, res, next) => {
 };
 
 const getExpense = async (req, res) => {
-  Expense.findAll({ where: { authId: req.user.id } })
-    .then((expenses) => {
-      return res.status(200).json({ expenses, success: true });
-    })
-    .catch((err) => {
-      console.log(err);
-      return res.status(500).json({ error: err, success: false });
-    });
+  try {
+    Expense.findAll({ where: { authId: req.user.id } })
+      .then((expenses) => {
+        return res.status(200).json({ expenses, success: true });
+      })
+      .catch((err) => {
+        console.log(err);
+        return res.status(500).json({ error: err, success: false });
+      });
+  } catch (err) {
+    console.log(err);
+  }
 };
 
 const deleteExpense = async (req, res, next) => {
