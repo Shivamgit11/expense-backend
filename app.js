@@ -3,6 +3,10 @@ const sgMail = require("@sendgrid/mail");
 const express = require("express");
 const bodyParser = require("body-parser");
 const sequelize = require("./util/database");
+const helmet = require("helmet");
+const compression = require("compression");
+const morgan = require("morgan");
+const fs = require("fs");
 
 const app = express();
 
@@ -14,6 +18,20 @@ const authRoutes = require("./routes/auth");
 const purchaseroutes = require("./routes/purchase");
 const leaderrouter = require("./routes/premiumFeature");
 const Forgotpassword = require("./models/forgetpassword");
+const accesLogStream = fs.createWriteStream(path.join());
+
+//using helmet
+
+app.use(helmet());
+app.use(compression());
+app.use(morgan("combined"));
+const accessLogStream = fs.createWriteStream(
+  path.join(__dirname, "access.log"),
+
+  { flags: "a" }
+);
+
+app.use(morgan("combined"), { stream: accessLogStream });
 
 const resetPasswordRoutes = require("./routes/resetPassword");
 var cors = require("cors");
